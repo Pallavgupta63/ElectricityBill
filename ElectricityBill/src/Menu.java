@@ -1,80 +1,155 @@
+
+import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Menu {
+	public class Menu {
 
-	public static void main(String[] args) {
-		
+		public static void main(String[] args) {
+			
 		Scanner s= new Scanner(System.in);
-		
-		System.out.println("Welcome to BSES");
-		System.out.println("Are you?");
-		System.out.println("1. Admin");
-		System.out.println("2. Customer");
-		int n = s.nextInt(); 
-		int flag=0;
-//  -----------------------------------ADMIN STUB--------------------------------------------
-		if(n==1) {
+		ConnectionService conn = new ConnectionService();
+		Boolean flag = true;
+		while(flag) {	
+			System.out.println("Welcome to BSES");
+			System.out.println("Are you?");
+			System.out.println("1. Admin");
+			System.out.println("2. Customer");
+			System.out.println("0. EXIT");
+			String n = s.next(); 
 			
-			System.out.println("Enter your passcode");
-			int pass=s.nextInt();
-			
-			if(pass!=1234) {
-				System.out.println("Passcode incorrect");
-				flag=1;
-				while(flag==1) {
-					System.out.println("Enter passcode again");
-					pass=s.nextInt();
-					if(pass==1234) {
-						flag=0;
+	//  -----------------------------------ADMIN STUB--------------------------------------------
+			if(n.equals("1")) {
+				
+				System.out.println("Enter your passcode");
+				int pass=s.nextInt();
+				
+				if(pass!=1234) {
+					System.out.println("Passcode incorrect");
+					Boolean p=false;
+					while(!p) {
+						System.out.println("Enter passcode again");
+						pass=s.nextInt();
+						if(pass==1234) {
+							p=true;
+						}
 					}
 				}
+				System.out.println("1. Add Customer");
+				System.out.println("2. Add Bill");
+				System.out.println("3. EXIT");
+				String choice1=s.next();
+				switch(choice1) {
+				case "1":
+					System.out.println("Enter Customer Name");
+					String name = s.next();
+					System.out.println("Enter Your Aadhar Number");
+					long custId = s.nextLong();
+					System.out.println("Adding Customer");
+					int connNumber = conn.addCustomer(custId, name);
+					System.out.println(connNumber);
+					
+					break;
+				case "2":
+					System.out.println("Enter connection Number");
+					int connectionNumber = s.nextInt();
+					while(!conn.hasConnectionNumber(connectionNumber)) {
+						System.out.println("Invalid Connection Number");
+						System.out.println("Try Again");
+						connectionNumber = s.nextInt();
+					}
+					System.out.println("Enter billId");
+					int billId = s.nextInt();
+					System.out.println("Enter amount");
+					float amount = s.nextFloat();
+					System.out.println("Enter month (MM format)");
+					int month = s.nextInt();
+					System.out.println("Enter Year (YYYY format)");
+					int year = s.nextInt();
+					Bill bill=new Bill(billId,amount,month,year);
+					if(conn.addBill(connectionNumber, bill)) {
+						System.out.println("Successfully added");
+					}
+					else {
+						System.out.println("Unable to add bill");
+					}
+					break;
+				case "3":
+					System.out.println("Now Exiting");
+					flag=false;
+					break;
+				default:
+					System.out.println("Invalid Choice");
+					break;
+					
+				}
+				
 			}
-			Customer c= new Customer();
-			System.out.println("Add a customer");
-			System.out.println("Enter customer id:");
-			c.c_id=s.nextInt();
-			System.out.println("Enter customer name:");
-			c.c_name=s.next();
-			System.out.println("Creating a new connection....");
-			c.conn();
-			System.out.println("Enter bill amount:");
-			c.bill_curr=s.nextInt();
-		}
-// ---------------------------------------CUSTOMER STUB---------------------------------------
-		
-		if(n==2) {
-			System.out.println("Enter your Customer ID");
-			int id=s.nextInt();
-			System.out.println("Hello "+id);
-			System.out.println("1. Create a wallet");
-			System.out.println("2. View current month bill");
-			System.out.println("3. Pay current month bill");
-			System.out.println("4. View bill for last 6 months");
-			System.out.println("5. Request a new connection");
-			System.out.println("6. Status of new conenction");
-			System.out.println("7. Exit");
-			System.out.println("Make a choice");
-			int choice=s.nextInt();
-			Customer c= new Customer();
-			switch(choice) {
-				case 1: c.wallet_create();
-					break;
-				case 2: c.bill_current();
-					break;
-				case 3: c.bill_pay();
-					break;
-				case 4: c.last_six_months();
-					break;
-				case 5: c.conn();
-					break;
-				case 6: c.status();
-					break;
-				case 7:
-					break;
-			}
+	// ---------------------------------------CUSTOMER STUB---------------------------------------
 			
+			else if(n.equals("2")) {
+				System.out.println("Enter your Existing Connection Number");
+				int connectionNumber = s.nextInt();
+				while(!conn.hasConnectionNumber(connectionNumber)) {
+					System.out.println("Invalid Connection Number");
+					System.out.println("Try Again");
+					connectionNumber = s.nextInt();
+				}
+				Customer cust = conn.getCustomer(connectionNumber);
+				System.out.println("Hello "+cust.getName());
+				System.out.println("1. View the recent bill");
+				System.out.println("2. Pay current month bill");
+				System.out.println("3. View bill for last 6 months");
+				System.out.println("4. Request a new connection");
+				System.out.println("0. EXIT");
+				System.out.println("Make a choice");
+				String choice2=s.next();
+				
+				//Customer c= new Customer();
+				switch(choice2) {
+					
+					case "1": 
+						System.out.println(conn.billCurrent(connectionNumber));
+						break;
+					case "2": 
+						System.out.println(conn.billPay(connectionNumber));
+						break;
+					case "3": 
+						ArrayList<Float> billList = conn.billSixMonths(connectionNumber);
+						for(float bill:billList) {
+							System.out.println(bill);
+						}
+						break;
+					case "4": System.out.println("This is your new connection number "+conn.addConnection(cust));
+						break;
+					
+					case "0":
+						System.out.println("Now Exiting");
+						flag=false;
+						break;
+					default:
+						System.out.println("Invalid Choice");
+						break;
+				}
+				
+			}
+			else if(n.equals("0")){
+				System.out.println("Now Exiting");
+				flag=false;
+			}
+			else {
+				System.out.println("Invalid Choice");
+			}
+				
+		
 		}
 		
+		
+		s.close();
+	
 	}
 
+
 }
+
+	
+

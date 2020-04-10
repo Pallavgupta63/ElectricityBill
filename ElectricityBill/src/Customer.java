@@ -1,20 +1,57 @@
-import java.util.Random;
+
+
+import java.util.Stack;
 
 public class Customer {
 
-	int c_id;
-	String c_name;
-	int conn_num;
-	int bill_curr;
-	int wallet;
-	int last_six;
+	private long custId;
+	private String name;
+	private Stack<Bill> billStack;
+	private int connectionNumber;
 	
-	public void conn() {
-		int conn_num=new Random().nextInt(900000) + 100000;
-		}
-	public void wallet_create() {}
-	public void bill_current() {}
-	public void bill_pay() {}
-	public void last_six_months() {}
-	public void status() {}
+	
+	
+	public Customer() {
+		super();
+	}
+	public Customer(long custId, String name, Stack<Bill> billStack, int connectionNumber) {
+		super();
+		this.custId = custId;
+		this.name = name;
+		this.billStack = billStack;
+		this.connectionNumber = connectionNumber;
+	}
+	public long getCustId() {
+		return custId;
+	}
+	public void setCustId(int custId) {
+		this.custId = custId;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public Stack<Bill> getBillStack() {
+		return billStack;
+	}
+	public void setBillStack(Stack<Bill> billStack) {
+		this.billStack = billStack;
+	}
+	public int getConnectionNumber() {
+		return connectionNumber;
+	}
+	public void setConnectionNumber(int connectionNumber) {
+		this.connectionNumber = connectionNumber;
+	}
+	
+	
+	
+	
+	
+	
 }
+	
+	
+
